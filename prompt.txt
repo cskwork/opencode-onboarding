@@ -1,0 +1,30 @@
+Set me up with OpenCode 2 (opencode2) plus the oh-my-opencode-slim multi-agent suite. Use the default setup everywhere: install, configure, verify. Don't ask me to pick models or presets - the defaults are what I want.
+
+Steps:
+
+1. Install OpenCode 2 globally. It runs as `opencode2` and will not touch an existing `opencode` v1 install:
+
+       npm install -g @opencode-ai/cli@next
+
+   (Bun users: `bun install -g --trust @opencode-ai/cli@next`. On Windows, install and run it inside WSL.)
+   Verify with `opencode2 --version`.
+
+2. Install the oh-my-opencode-slim plugin:
+
+       npx oh-my-opencode-slim@latest install
+
+   (or `bunx oh-my-opencode-slim@latest install`). Accept every installer default. The default preset (OpenAI) is fine.
+
+3. Make sure OpenCode 2 loads the plugin. The installer usually registers it. If not, follow the "OpenCode v2 (opencode2) Compatibility" section of the plugin README and add the plugin entry to the config file OpenCode 2 loads on this machine (official v2 docs put global config at ~/.config/opencode/opencode.json with a `plugins` array; the plugin README references ~/.config/opencode2/). Keep every existing entry.
+
+4. Check that at least one model provider is connected. If none is, tell me to launch `opencode2`, run /connect, and pick a provider, then continue once it is connected.
+
+5. Verify the team. Launch `opencode2` in my project, send the message "ping all agents", and report which of the seven agents answered.
+
+Rules:
+
+- Never overwrite or delete an existing config without showing me the exact change first and getting my OK.
+- If a step fails, stop, print the full error, and propose a fix before continuing.
+- Finish with a short summary: what was installed, where the config files live, and how to switch model presets later with /preset.
+
+References: https://opencode.ai/v2/docs/ - https://github.com/alvinunreal/oh-my-opencode-slim

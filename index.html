@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenCode 2 Onboarding — one paste, seven agents</title>
+<meta name="description" content="Copy one prompt, paste it into any AI coding agent, and get OpenCode 2 (opencode2) running with the oh-my-opencode-slim multi-agent suite on sensible defaults.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9A%A1%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07030f;
+  --ink:#f4f0ff;
+  --muted:#a89ec4;
+  --line:rgba(255,255,255,.09);
+  --card:rgba(255,255,255,.035);
+  --gold:#fbbf24; --magenta:#f472b6; --violet:#a78bfa; --cyan:#22d3ee; --emerald:#34d399; --orange:#fb923c; --blue:#60a5fa;
+  --grad:linear-gradient(92deg,var(--gold),var(--magenta) 35%,var(--violet) 65%,var(--cyan));
+  --font-d:"Space Grotesk",system-ui,sans-serif;
+  --font-m:"JetBrains Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--ink);font-family:var(--font-d);line-height:1.6;
+  background-image:
+    radial-gradient(60rem 40rem at 15% -10%,rgba(124,58,237,.28),transparent 60%),
+    radial-gradient(50rem 35rem at 90% 0%,rgba(236,72,153,.20),transparent 60%),
+    radial-gradient(45rem 40rem at 50% 110%,rgba(34,211,238,.12),transparent 60%);
+  background-attachment:fixed;
+  overflow-x:hidden;
+}
+a{color:var(--cyan);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+.center{text-align:center}
+
+/* nav */
+nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);background:rgba(7,3,15,.72);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+.brand{font-weight:700;letter-spacing:.02em;display:flex;align-items:center;gap:.5rem;color:var(--ink)}
+.brand:hover{text-decoration:none}
+.brand .bolt{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-size:1.2rem}
+nav ul{display:flex;gap:1.4rem;list-style:none;font-size:.92rem}
+nav ul a{color:var(--muted)}
+nav ul a:hover{color:var(--ink);text-decoration:none}
+@media(max-width:640px){nav ul{display:none}}
+
+/* type */
+.eyebrow{font-family:var(--font-m);font-size:.75rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);display:inline-flex;align-items:center;gap:.55rem}
+.eyebrow::before{content:"";width:.55rem;height:.55rem;border-radius:50%;background:var(--grad);box-shadow:0 0 12px var(--magenta)}
+h1{font-size:clamp(2.5rem,7vw,4.6rem);line-height:1.04;letter-spacing:-.02em;font-weight:700;margin:1.1rem 0}
+.grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font-size:clamp(1.6rem,3.6vw,2.3rem);letter-spacing:-.015em;margin:.6rem 0 1.4rem}
+.sub{color:var(--muted);font-size:clamp(1.02rem,2vw,1.2rem);max-width:44rem}
+section{padding:5.5rem 0}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;gap:.6rem;padding:.85rem 1.5rem;border-radius:999px;font-weight:600;font-family:var(--font-d);font-size:1rem;border:1px solid transparent;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease}
+.btn:hover{text-decoration:none;transform:translateY(-2px)}
+.btn-primary{background:var(--grad);color:#12041f;box-shadow:0 8px 30px rgba(244,114,182,.35)}
+.btn-primary:hover{box-shadow:0 12px 38px rgba(167,139,250,.45)}
+.btn-ghost{border-color:var(--line);color:var(--ink);background:rgba(255,255,255,.04)}
+.hero-cta{display:flex;gap:.9rem;flex-wrap:wrap;justify-content:center;margin-top:2.2rem}
+
+/* hero */
+.hero{padding:7rem 0 5rem;position:relative}
+.hero::after{content:"🏛";position:absolute;right:4%;bottom:-2rem;font-size:11rem;opacity:.07;transform:rotate(-8deg);pointer-events:none}
+.chips{display:flex;flex-wrap:wrap;gap:.55rem;justify-content:center;margin-top:2.6rem}
+.chip{font-family:var(--font-m);font-size:.78rem;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:.35rem .8rem;background:rgba(255,255,255,.03)}
+
+/* prompt card */
+.prompt-shell{border-radius:1.25rem;border:1px solid rgba(255,255,255,.14);overflow:hidden;background:#0c0618;box-shadow:0 30px 80px rgba(0,0,0,.5),0 0 60px rgba(167,139,250,.14)}
+.prompt-bar{display:flex;align-items:center;gap:.5rem;padding:.8rem 1.1rem;border-bottom:1px solid var(--line);background:rgba(255,255,255,.03)}
+.dot{width:.72rem;height:.72rem;border-radius:50%}
+.dot.r{background:#ff5f57}.dot.y{background:#febc2e}.dot.g{background:#28c840}
+.prompt-bar .label{margin-left:.6rem;font-family:var(--font-m);font-size:.78rem;color:var(--muted)}
+.prompt-bar .spacer{flex:1}
+.copy-btn{font-family:var(--font-m);font-size:.78rem;font-weight:700;letter-spacing:.06em;color:#12041f;background:var(--grad);border:none;border-radius:.55rem;padding:.45rem .9rem;cursor:pointer;transition:filter .15s ease,transform .15s ease}
+.copy-btn:hover{filter:brightness(1.12);transform:translateY(-1px)}
+.copy-btn:active{transform:translateY(0)}
+pre.prompt{padding:1.4rem 1.5rem;overflow-x:auto;font-family:var(--font-m);font-size:.83rem;line-height:1.65;color:#dcd2f5;white-space:pre}
+.prompt-note{color:var(--muted);font-size:.95rem;margin-top:1.1rem}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.1rem;margin-top:2.4rem}
+.step{background:var(--card);border:1px solid var(--line);border-radius:1rem;padding:1.5rem 1.4rem;position:relative;transition:transform .15s ease,border-color .15s ease}
+.step:hover{transform:translateY(-4px);border-color:var(--c,var(--violet))}
+.step .n{font-family:var(--font-m);font-weight:700;font-size:.8rem;color:#12041f;background:var(--c,var(--violet));width:1.9rem;height:1.9rem;border-radius:.55rem;display:flex;align-items:center;justify-content:center;margin-bottom:.9rem}
+.step h3{font-size:1.05rem;margin-bottom:.4rem}
+.step p{color:var(--muted);font-size:.92rem}
+.step code{font-family:var(--font-m);font-size:.82em;color:var(--c,var(--violet))}
+
+/* pantheon */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.1rem;margin-top:2.4rem}
+.agent{--c:var(--violet);background:var(--card);border:1px solid var(--line);border-radius:1rem;padding:1.5rem;transition:transform .15s ease,box-shadow .15s ease}
+.agent:hover{transform:translateY(-4px);box-shadow:0 14px 40px color-mix(in srgb,var(--c) 22%,transparent)}
+.agent .icon{font-size:1.7rem;line-height:1;margin-bottom:.8rem}
+.agent h3{font-size:1.08rem;display:flex;align-items:center;gap:.5rem}
+.agent h3 .tag{font-family:var(--font-m);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--c);border:1px solid color-mix(in srgb,var(--c) 45%,transparent);border-radius:.4rem;padding:.1rem .4rem}
+.agent p{color:var(--muted);font-size:.9rem;margin:.5rem 0 .8rem}
+.agent .model{font-family:var(--font-m);font-size:.75rem;color:var(--c)}
+.agent.observer{border-style:dashed}
+.agent.observer .model{color:var(--muted)}
+.grid-note{color:var(--muted);font-size:.9rem;margin-top:1.4rem}
+
+/* manual code blocks */
+.code-block{position:relative;margin:1rem 0 1.8rem}
+.code-block .lang{position:absolute;top:.7rem;right:.7rem;font-family:var(--font-m);font-size:.68rem;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;pointer-events:none}
+.code-block .copy-btn{position:absolute;top:.55rem;right:.55rem;font-size:.68rem;padding:.3rem .6rem;opacity:.85}
+pre.code{background:#0c0618;border:1px solid var(--line);border-radius:.9rem;padding:1.1rem 1.2rem;overflow-x:auto;font-family:var(--font-m);font-size:.85rem;line-height:1.6;color:#dcd2f5}
+pre.code .lang{display:none}
+h3.mini{font-size:1rem;margin-top:1.6rem;color:var(--ink)}
+h3.mini code, p code{font-family:var(--font-m);font-size:.85em;color:var(--gold)}
+
+/* presets strip */
+.presets{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.1rem;margin-top:2rem}
+.preset{border:1px solid var(--line);border-radius:1rem;padding:1.3rem 1.4rem;background:var(--card)}
+.preset b{display:block;margin-bottom:.35rem}
+.preset span{color:var(--muted);font-size:.9rem}
+.preset.live{border-color:var(--gold);box-shadow:0 0 40px rgba(251,191,36,.12)}
+.preset.live b{color:var(--gold)}
+
+/* footer */
+footer{border-top:1px solid var(--line);padding:2.6rem 0;color:var(--muted);font-size:.88rem}
+footer .wrap{display:flex;flex-wrap:wrap;gap:1rem 2rem;justify-content:space-between;align-items:center}
+
+/* toast */
+#toast{position:fixed;bottom:1.6rem;left:50%;transform:translate(-50%,140%);background:var(--grad);color:#12041f;font-weight:700;font-size:.9rem;padding:.7rem 1.3rem;border-radius:999px;transition:transform .25s ease;z-index:99;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+#toast.show{transform:translate(-50%,0)}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{transition:none!important;animation:none!important}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="#top"><span class="bolt">⚡</span> opencode<span style="color:var(--muted)">·</span>onboarding</a>
+    <ul>
+      <li><a href="#prompt">The prompt</a></li>
+      <li><a href="#what">What it does</a></li>
+      <li><a href="#pantheon">The pantheon</a></li>
+      <li><a href="#manual">Manual</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero center" id="top">
+  <div class="wrap">
+    <span class="eyebrow">OpenCode 2 · onboarding</span>
+    <h1>One paste.<br><span class="grad-text">Seven agents.</span><br>Zero decisions.</h1>
+    <p class="sub center" style="margin:0 auto">Copy a single prompt into the AI agent you already use. It installs <strong>OpenCode 2</strong> (<code style="font-family:var(--font-m)">opencode2</code>), wires up the <strong>oh-my-opencode-slim</strong> multi-agent suite, and verifies everything — all on defaults.</p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="#prompt">⚡ Copy the setup prompt</a>
+      <a class="btn btn-ghost" href="#manual">Manual install</a>
+    </div>
+    <div class="chips">
+      <span class="chip">Claude Code</span>
+      <span class="chip">Codex CLI</span>
+      <span class="chip">Cursor</span>
+      <span class="chip">Gemini CLI</span>
+      <span class="chip">any LLM agent</span>
+    </div>
+  </div>
+</header>
+
+<section id="prompt">
+  <div class="wrap">
+    <div class="center">
+      <span class="eyebrow">The copy-paste prompt</span>
+      <h2>Paste this into <span class="grad-text">any agent</span></h2>
+      <p class="sub center" style="margin:0 auto 2.4rem">Your agent does the rest: installs OpenCode 2, installs the plugin, keeps the default preset, and pings every agent to prove it works.</p>
+    </div>
+    <div class="prompt-shell">
+      <div class="prompt-bar">
+        <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+        <span class="label">setup-prompt.txt</span>
+        <span class="spacer"></span>
+        <button class="copy-btn" data-copy="#setup-prompt" aria-label="Copy the setup prompt">COPY</button>
+      </div>
+<pre class="prompt" id="setup-prompt">Set me up with OpenCode 2 (opencode2) plus the oh-my-opencode-slim multi-agent suite. Use the default setup everywhere: install, configure, verify. Don't ask me to pick models or presets - the defaults are what I want.
+
+Steps:
+
+1. Install OpenCode 2 globally. It runs as `opencode2` and will not touch an existing `opencode` v1 install:
+
+       npm install -g @opencode-ai/cli@next
+
+   (Bun users: `bun install -g --trust @opencode-ai/cli@next`. On Windows, install and run it inside WSL.)
+   Verify with `opencode2 --version`.
+
+2. Install the oh-my-opencode-slim plugin:
+
+       npx oh-my-opencode-slim@latest install
+
+   (or `bunx oh-my-opencode-slim@latest install`). Accept every installer default. The default preset (OpenAI) is fine.
+
+3. Make sure OpenCode 2 loads the plugin. The installer usually registers it. If not, follow the "OpenCode v2 (opencode2) Compatibility" section of the plugin README and add the plugin entry to the config file OpenCode 2 loads on this machine (official v2 docs put global config at ~/.config/opencode/opencode.json with a `plugins` array; the plugin README references ~/.config/opencode2/). Keep every existing entry.
+
+4. Check that at least one model provider is connected. If none is, tell me to launch `opencode2`, run /connect, and pick a provider, then continue once it is connected.
+
+5. Verify the team. Launch `opencode2` in my project, send the message "ping all agents", and report which of the seven agents answered.
+
+Rules:
+
+- Never overwrite or delete an existing config without showing me the exact change first and getting my OK.
+- If a step fails, stop, print the full error, and propose a fix before continuing.
+- Finish with a short summary: what was installed, where the config files live, and how to switch model presets later with /preset.
+
+References: https://opencode.ai/v2/docs/ - https://github.com/alvinunreal/oh-my-opencode-slim</pre>
+    </div>
+    <p class="prompt-note center">Prefer raw text? <a href="prompt.txt">prompt.txt</a> — curl it, cat it, pipe it into whatever you like.</p>
+  </div>
+</section>
+
+<section id="what">
+  <div class="wrap">
+    <div class="center">
+      <span class="eyebrow">What the paste does</span>
+      <h2>Defaults in, <span class="grad-text">verified team out</span></h2>
+    </div>
+    <div class="steps">
+      <div class="step" style="--c:var(--cyan)">
+        <span class="n">1</span>
+        <h3>Install OpenCode 2</h3>
+        <p>Global install of <code>@opencode-ai/cli@next</code>. Runs as <code>opencode2</code> — v1's <code>opencode</code> binary stays untouched, side by side.</p>
+      </div>
+      <div class="step" style="--c:var(--magenta)">
+        <span class="n">2</span>
+        <h3>Add oh-my-opencode-slim</h3>
+        <p>One <code>npx</code> command installs the multi-agent plugin and registers it in your global OpenCode 2 config.</p>
+      </div>
+      <div class="step" style="--c:var(--gold)">
+        <span class="n">3</span>
+        <h3>Default preset, no questions</h3>
+        <p>Installer defaults all the way — the OpenAI preset is active out of the box. Connect any provider you like with <code>/connect</code>.</p>
+      </div>
+      <div class="step" style="--c:var(--emerald)">
+        <span class="n">4</span>
+        <h3>Verify the pantheon</h3>
+        <p><code>ping all agents</code> in your first session — all seven specialists must answer before the setup is called done.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pantheon">
+  <div class="wrap">
+    <div class="center">
+      <span class="eyebrow">Meet the pantheon</span>
+      <h2>Seven specialists, <span class="grad-text">one orchestrator</span></h2>
+      <p class="sub center" style="margin:0 auto">Each part of the job routes to the agent best suited for it — balancing quality, speed, and cost. These are the default models; swap the whole team at runtime with <code style="font-family:var(--font-m)">/preset</code>.</p>
+    </div>
+    <div class="grid">
+      <div class="agent" style="--c:var(--gold)">
+        <div class="icon">👑</div>
+        <h3>Orchestrator <span class="tag">Order</span></h3>
+        <p>Master delegator and strategic coordinator. Plans the work, dispatches specialists, reconciles results.</p>
+        <span class="model">openai/gpt-5.6-terra</span>
+      </div>
+      <div class="agent" style="--c:var(--cyan)">
+        <div class="icon">🧭</div>
+        <h3>Explorer <span class="tag">Wanderer</span></h3>
+        <p>Codebase reconnaissance. Fast, broad scouting of files, patterns, and structure.</p>
+        <span class="model">openai/gpt-5.6-luna</span>
+      </div>
+      <div class="agent" style="--c:var(--violet)">
+        <div class="icon">🔮</div>
+        <h3>Oracle <span class="tag">Paths</span></h3>
+        <p>Strategic advisor and debugger of last resort for architecture and hard trade-offs.</p>
+        <span class="model">openai/gpt-5.6-sol</span>
+      </div>
+      <div class="agent" style="--c:var(--magenta)">
+        <div class="icon">🏛️</div>
+        <h3>Council <span class="tag">Chorus</span></h3>
+        <p>Runs multiple models in parallel on one question and synthesizes a single verdict. Call it with <code>@council</code>.</p>
+        <span class="model">config-driven</span>
+      </div>
+      <div class="agent" style="--c:var(--emerald)">
+        <div class="icon">📚</div>
+        <h3>Librarian <span class="tag">Weaver</span></h3>
+        <p>External knowledge retrieval — fresh docs and references, woven into answers.</p>
+        <span class="model">openai/gpt-5.6-luna</span>
+      </div>
+      <div class="agent" style="--c:var(--orange)">
+        <div class="icon">🎨</div>
+        <h3>Designer <span class="tag">Aesthetics</span></h3>
+        <p>UI/UX implementation and visual excellence. Every pixel serves a purpose.</p>
+        <span class="model">openai/gpt-5.6-luna</span>
+      </div>
+      <div class="agent" style="--c:var(--blue)">
+        <div class="icon">🔨</div>
+        <h3>Fixer <span class="tag">Builder</span></h3>
+        <p>Fast implementation specialist — the final step between plan and reality.</p>
+        <span class="model">openai/gpt-5.6-luna</span>
+      </div>
+      <div class="agent observer">
+        <div class="icon">👁️</div>
+        <h3>Observer <span class="tag" style="color:var(--muted);border-color:var(--line)">Optional</span></h3>
+        <p>Read-only visual analysis for images, screenshots, and PDFs. Disabled by default; enable it if your orchestrator model isn't multimodal.</p>
+        <span class="model">vision-capable model</span>
+      </div>
+    </div>
+    <p class="grid-note center">Defaults are a starting point — the plugin is built for deep customization. See the <a href="https://github.com/alvinunreal/oh-my-opencode-slim/tree/master/docs" rel="noopener">preset &amp; configuration docs</a>.</p>
+  </div>
+</section>
+
+<section id="manual">
+  <div class="wrap">
+    <div class="center">
+      <span class="eyebrow">Prefer doing it yourself?</span>
+      <h2>Manual install, <span class="grad-text">four commands</span></h2>
+    </div>
+
+    <h3 class="mini">1 · Install the OpenCode 2 CLI</h3>
+    <div class="code-block">
+      <button class="copy-btn" data-copy="#c-npm" aria-label="Copy npm install command">COPY</button>
+      <pre class="code" id="c-npm">npm install -g @opencode-ai/cli@next</pre>
+    </div>
+    <div class="code-block">
+      <button class="copy-btn" data-copy="#c-bun" aria-label="Copy bun install command">COPY</button>
+      <pre class="code" id="c-bun">bun install -g --trust @opencode-ai/cli@next</pre>
+    </div>
+    <div class="code-block">
+      <button class="copy-btn" data-copy="#c-curl" aria-label="Copy curl install command">COPY</button>
+      <pre class="code" id="c-curl">curl -fsSL https://raw.githubusercontent.com/anomalyco/opencode/v2/install | bash</pre>
+    </div>
+
+    <h3 class="mini">2 · Install oh-my-opencode-slim</h3>
+    <div class="code-block">
+      <button class="copy-btn" data-copy="#c-slim" aria-label="Copy plugin install command">COPY</button>
+      <pre class="code" id="c-slim">npx oh-my-opencode-slim@latest install</pre>
+    </div>
+
+    <h3 class="mini">3 · Make sure OpenCode 2 loads it</h3>
+    <p style="color:var(--muted);font-size:.95rem">Global config lives at <code>~/.config/opencode/opencode.json</code> (create the file if it doesn't exist):</p>
+    <div class="code-block">
+      <button class="copy-btn" data-copy="#c-json" aria-label="Copy plugin config JSON">COPY</button>
+      <pre class="code" id="c-json">{ "plugins": ["oh-my-opencode-slim"] }</pre>
+    </div>
+    <p style="color:var(--muted);font-size:.95rem">The plugin's README shows a <code>plugin</code> entry under <code>~/.config/opencode2/</code> for v2 — the installer wires this up either way. If <code>opencode2</code> starts without the slim agents, check that entry against the README's “OpenCode v2 Compatibility” section.</p>
+
+    <h3 class="mini">4 · Connect a provider &amp; verify</h3>
+    <div class="code-block">
+      <button class="copy-btn" data-copy="#c-run" aria-label="Copy run command">COPY</button>
+      <pre class="code" id="c-run">opencode2</pre>
+    </div>
+    <p style="color:var(--muted);font-size:.95rem">Run <code>/connect</code> to pick a provider, then send <code>ping all agents</code> — everyone should answer. Windows users: the beta recommends <a href="https://learn.microsoft.com/windows/wsl/install" rel="noopener">WSL</a>.</p>
+  </div>
+</section>
+
+<section id="presets">
+  <div class="wrap">
+    <div class="center">
+      <span class="eyebrow">Presets</span>
+      <h2>Start default, <span class="grad-text">swap anytime</span></h2>
+      <p class="sub center" style="margin:0 auto 0">The setup prompt keeps the default preset. When you're ready for different models, one runtime command flips the whole team.</p>
+    </div>
+    <div class="presets">
+      <div class="preset live"><b>OpenAI — active by default</b><span>The preset the installer turns on. Terra orchestrates, Sol reasons, Luna handles the fast lanes.</span></div>
+      <div class="preset"><b>OpenCode Go</b><span>Open-source models on a $10/mo plan. Install with <code>--preset=opencode-go</code> or switch at runtime.</span></div>
+      <div class="preset"><b>Free &amp; custom mixes</b><span>A zero-cost preset exists, and any provider mix is supported — mix any model across any agent.</span></div>
+    </div>
+    <p class="grid-note center">Switch at runtime with <code style="font-family:var(--font-m)">/preset</code> · browse all options in the <a href="https://github.com/alvinunreal/oh-my-opencode-slim/tree/master/docs" rel="noopener">preset docs</a>.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>Unofficial onboarding page for <a href="https://opencode.ai/v2/docs/" rel="noopener">OpenCode 2</a> + <a href="https://github.com/alvinunreal/oh-my-opencode-slim" rel="noopener">oh-my-opencode-slim</a>. OpenCode 2 is beta — APIs may change.</span>
+    <span>⚡ One paste and you're coding with a pantheon.</span>
+  </div>
+</footer>
+
+<div id="toast" role="status" aria-live="polite">Copied!</div>
+
+<script>
+(function(){
+  var toast = document.getElementById('toast');
+  var toastTimer = null;
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 1600);
+  }
+  function copyText(text, btn){
+    function fallback(){
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); showToast('Copied!'); }
+      catch(e){ showToast('Copy failed — select manually'); }
+      document.body.removeChild(ta);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function(){ showToast('Copied!'); }, fallback);
+    } else { fallback(); }
+  }
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('.copy-btn');
+    if (!btn) return;
+    var sel = btn.getAttribute('data-copy');
+    var el = document.querySelector(sel);
+    if (!el) return;
+    copyText(el.textContent, btn);
+  });
+})();
+</script>
+</body>
+</html>
