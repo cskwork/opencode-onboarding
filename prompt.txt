@@ -14,6 +14,7 @@ Steps:
        npx oh-my-opencode-slim@latest install
 
    (or `bunx oh-my-opencode-slim@latest install`). Accept every installer default. The default preset (OpenAI) is fine.
+   If I have a Z.ai GLM coding plan, configure the agents on glm-5.3 instead - the most recent GLM; explorer and librarian may use glm-5-turbo. Never default any agent to glm-5.2.
 
 3. Make sure OpenCode 2 loads the plugin. The installer usually registers it. If not, follow the "OpenCode v2 (opencode2) Compatibility" section of the plugin README and add the plugin entry to the config file OpenCode 2 loads on this machine (official v2 docs put global config at ~/.config/opencode/opencode.json with a `plugins` array; the plugin README references ~/.config/opencode2/). Keep every existing entry.
 

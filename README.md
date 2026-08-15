@@ -25,6 +25,7 @@ Steps:
        npx oh-my-opencode-slim@latest install
 
    (or `bunx oh-my-opencode-slim@latest install`). Accept every installer default. The default preset (OpenAI) is fine.
+   If I have a Z.ai GLM coding plan, configure the agents on glm-5.3 instead - the most recent GLM; explorer and librarian may use glm-5-turbo. Never default any agent to glm-5.2.
 
 3. Make sure OpenCode 2 loads the plugin. The installer usually registers it. If not, follow the "OpenCode v2 (opencode2) Compatibility" section of the plugin README and add the plugin entry to the config file OpenCode 2 loads on this machine (official v2 docs put global config at ~/.config/opencode/opencode.json with a `plugins` array; the plugin README references ~/.config/opencode2/). Keep every existing entry.
 
@@ -81,7 +82,23 @@ Send `ping all agents` in the session — every agent should answer.
 
 - `opencode2` — the OpenCode 2 CLI, installed side by side with v1 (v1's `opencode` binary is untouched)
 - oh-my-opencode-slim — seven specialized agents (Orchestrator, Explorer, Oracle, Council, Librarian, Designer, Fixer) under one orchestrator, on the default preset
-- Default models out of the box; swap the whole team at runtime with `/preset` (see the [preset docs](https://github.com/alvinunreal/oh-my-opencode-slim/tree/master/docs) — including a free preset)
+- Default models out of the box; swap the whole team at runtime with `/preset` (see the [preset docs](https://github.com/alvinunreal/oh-my-opencode-slim/tree/master/docs) — including a free preset). GLM coding plan users: run the agents on `zai-coding-plan/glm-5.3` (explorer/librarian can take `glm-5-turbo`); `glm-5.2` is superseded — don't default to it.
+
+## Troubleshooting
+
+If `ping all agents` fails:
+
+1. **Are env vars set in this shell?** Background subagents need `OPENCODE_EXPERIMENTAL_BACKGROUND_SUBAGENTS=true` (and `OPENCODE_ENABLE_EXA=1` for websearch). If they're missing, dispatch itself fails with empty errors on every lane.
+2. **Empty errors on all lanes?** Read the server log: `~/.local/share/opencode/log/opencode.log` (Windows: `%LOCALAPPDATA%`-style path above). Filter for `level=ERROR`.
+   - `Integration.Authorization ... 401` → a provider's auth expired. Isolate with `opencode2 run -m <provider/model> "reply with exactly: PONG"` per model, then re-auth the failing provider (launch `opencode2`, run `/connect`).
+   - `HTTP 429 ... subscription plan does not yet include` → your plan doesn't cover that model. Swap it in `~/.config/opencode/oh-my-opencode-slim.json`.
+3. **Windows**: after changing env vars or config, `opencode2 service restart`, then retry the ping.
+
+This repo keeps the setup prompt byte-identical in three places (`prompt.txt`, `README.md`, `index.html`). After editing it, run:
+
+```sh
+pwsh scripts/check-prompt-sync.ps1
+```
 
 ## Notes
 
