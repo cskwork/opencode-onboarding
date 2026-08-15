@@ -3,186 +3,299 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>OpenCode 2 Onboarding — one paste, seven agents</title>
-<meta name="description" content="Copy one prompt, paste it into any AI coding agent, and get OpenCode 2 (opencode2) running with the oh-my-opencode-slim multi-agent suite on sensible defaults.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9A%A1%3C/text%3E%3C/svg%3E">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0a0a0b">
+<title>OpenCode 2 onboarding — paste one prompt, get a seven-agent team</title>
+<meta name="description" content="Copy one prompt into any AI coding agent to install OpenCode 2 (opencode2) and the oh-my-opencode-slim multi-agent suite on defaults — then verify the team with ping all agents.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230a0a0b'/%3E%3Cpath d='M18 20l14 12-14 12' fill='none' stroke='%23c8ff4d' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M34 44h14' stroke='%23c8ff4d' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js');</script>
 <style>
 :root{
-  --bg:#07030f;
-  --ink:#f4f0ff;
-  --muted:#a89ec4;
-  --line:rgba(255,255,255,.09);
-  --card:rgba(255,255,255,.035);
-  --gold:#fbbf24; --magenta:#f472b6; --violet:#a78bfa; --cyan:#22d3ee; --emerald:#34d399; --orange:#fb923c; --blue:#60a5fa;
-  --grad:linear-gradient(92deg,var(--gold),var(--magenta) 35%,var(--violet) 65%,var(--cyan));
-  --font-d:"Space Grotesk",system-ui,sans-serif;
-  --font-m:"JetBrains Mono",ui-monospace,monospace;
+  --bg:#0a0a0b;
+  --bg2:#0d0d0f;
+  --bg3:#111114;
+  --ink:#ecebe6;
+  --mut:#96948c;
+  --dim:#6d6b64;
+  --line:#212125;
+  --line2:#2b2b31;
+  --acc:#c8ff4d;
+  --acc-ink:#0b0b0c;
+  --font-d:"Bricolage Grotesque",system-ui,sans-serif;
+  --font-m:"JetBrains Mono",ui-monospace,SFMono-Regular,Consolas,monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;scroll-padding-top:4.5rem}
 body{
-  background:var(--bg);color:var(--ink);font-family:var(--font-d);line-height:1.6;
-  background-image:
-    radial-gradient(60rem 40rem at 15% -10%,rgba(124,58,237,.28),transparent 60%),
-    radial-gradient(50rem 35rem at 90% 0%,rgba(236,72,153,.20),transparent 60%),
-    radial-gradient(45rem 40rem at 50% 110%,rgba(34,211,238,.12),transparent 60%);
-  background-attachment:fixed;
-  overflow-x:hidden;
+  background:var(--bg);color:var(--ink);
+  font-family:var(--font-d);font-size:16px;line-height:1.6;
+  overflow-x:clip;
+  -webkit-font-smoothing:antialiased;
 }
-a{color:var(--cyan);text-decoration:none}
-a:hover{text-decoration:underline}
-.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
-.center{text-align:center}
+/* faint paper grain */
+body::after{
+  content:"";position:fixed;inset:0;z-index:60;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+::selection{background:var(--acc);color:var(--acc-ink)}
+a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--line2);text-underline-offset:3px}
+a:hover{text-decoration-color:var(--acc)}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+code{font-family:var(--font-m);font-size:.86em;color:#cfcecb;background:var(--bg3);border:1px solid var(--line);border-radius:3px;padding:.08em .35em;white-space:nowrap}
+.wrap{max-width:1120px;margin-inline:auto;padding-inline:clamp(18px,4vw,36px)}
 
-/* nav */
-nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);background:rgba(7,3,15,.72);border-bottom:1px solid var(--line)}
-nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
-.brand{font-weight:700;letter-spacing:.02em;display:flex;align-items:center;gap:.5rem;color:var(--ink)}
-.brand:hover{text-decoration:none}
-.brand .bolt{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-size:1.2rem}
-nav ul{display:flex;gap:1.4rem;list-style:none;font-size:.92rem}
-nav ul a{color:var(--muted)}
-nav ul a:hover{color:var(--ink);text-decoration:none}
-@media(max-width:640px){nav ul{display:none}}
+/* ---------- nav ---------- */
+nav{position:sticky;top:0;z-index:50;background:rgba(10,10,11,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.navrow{display:flex;align-items:center;justify-content:space-between;gap:1rem;height:54px}
+.brand{display:flex;align-items:center;gap:.6rem;font-family:var(--font-m);font-weight:600;font-size:.85rem;letter-spacing:.02em;text-decoration:none}
+.brand svg{display:block}
+.brand .tail{color:var(--dim);font-weight:400}
+.navlinks{display:flex;gap:1.5rem;list-style:none;font-family:var(--font-m);font-size:.68rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;overflow-x:auto;scrollbar-width:none}
+.navlinks::-webkit-scrollbar{display:none}
+.navlinks a{color:var(--mut);text-decoration:none;white-space:nowrap;padding:.25rem 0}
+.navlinks a:hover{color:var(--acc)}
+@media(max-width:560px){.brand .tail{display:none}}
 
-/* type */
-.eyebrow{font-family:var(--font-m);font-size:.75rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);display:inline-flex;align-items:center;gap:.55rem}
-.eyebrow::before{content:"";width:.55rem;height:.55rem;border-radius:50%;background:var(--grad);box-shadow:0 0 12px var(--magenta)}
-h1{font-size:clamp(2.5rem,7vw,4.6rem);line-height:1.04;letter-spacing:-.02em;font-weight:700;margin:1.1rem 0}
-.grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-h2{font-size:clamp(1.6rem,3.6vw,2.3rem);letter-spacing:-.015em;margin:.6rem 0 1.4rem}
-.sub{color:var(--muted);font-size:clamp(1.02rem,2vw,1.2rem);max-width:44rem}
-section{padding:5.5rem 0}
+/* ---------- shared type ---------- */
+.kicker{display:flex;align-items:baseline;gap:.7rem;font-family:var(--font-m);font-size:.66rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--mut)}
+.kicker .idx{color:var(--acc);font-weight:700}
+h1{font-size:clamp(2.5rem,7.5vw,4.9rem);line-height:1.0;font-weight:750;letter-spacing:-.025em;margin:1.4rem 0 1.6rem;text-wrap:balance}
+h1 .acc{color:var(--acc)}
+.lede{color:var(--mut);font-size:clamp(1.02rem,1.6vw,1.18rem);max-width:36rem;line-height:1.65}
+h2{font-size:clamp(1.45rem,3vw,2.05rem);font-weight:650;letter-spacing:-.015em;line-height:1.15;text-wrap:balance}
+h2 .idx{font-family:var(--font-m);font-size:.7rem;font-weight:700;color:var(--acc);letter-spacing:.12em;vertical-align:.5em;margin-right:.7rem}
+h3{font-size:1.02rem;font-weight:650;letter-spacing:-.01em}
 
-/* buttons */
-.btn{display:inline-flex;align-items:center;gap:.6rem;padding:.85rem 1.5rem;border-radius:999px;font-weight:600;font-family:var(--font-d);font-size:1rem;border:1px solid transparent;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease}
-.btn:hover{text-decoration:none;transform:translateY(-2px)}
-.btn-primary{background:var(--grad);color:#12041f;box-shadow:0 8px 30px rgba(244,114,182,.35)}
-.btn-primary:hover{box-shadow:0 12px 38px rgba(167,139,250,.45)}
-.btn-ghost{border-color:var(--line);color:var(--ink);background:rgba(255,255,255,.04)}
-.hero-cta{display:flex;gap:.9rem;flex-wrap:wrap;justify-content:center;margin-top:2.2rem}
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;gap:.6rem;font-family:var(--font-m);font-size:.74rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:.95rem 1.3rem;border-radius:4px;cursor:pointer;text-decoration:none;transition:transform .16s ease,background-color .16s ease,border-color .16s ease,color .16s ease}
+.btn:hover{text-decoration:none;transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn-acc{background:var(--acc);color:var(--acc-ink);border:1px solid var(--acc)}
+.btn-acc:hover{background:#daff87;border-color:#daff87}
+.btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--line2)}
+.btn-ghost:hover{border-color:var(--mut)}
+.copy{font-family:var(--font-m);font-size:.64rem;font-weight:600;letter-spacing:.12em;color:var(--mut);background:var(--bg3);border:1px solid var(--line2);border-radius:3px;padding:.42rem .7rem;cursor:pointer;transition:color .15s ease,border-color .15s ease;white-space:nowrap}
+.copy:hover{color:var(--acc);border-color:var(--acc)}
+.copy.done{color:var(--acc-ink);background:var(--acc);border-color:var(--acc)}
 
-/* hero */
-.hero{padding:7rem 0 5rem;position:relative}
-.hero::after{content:"🏛";position:absolute;right:4%;bottom:-2rem;font-size:11rem;opacity:.07;transform:rotate(-8deg);pointer-events:none}
-.chips{display:flex;flex-wrap:wrap;gap:.55rem;justify-content:center;margin-top:2.6rem}
-.chip{font-family:var(--font-m);font-size:.78rem;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:.35rem .8rem;background:rgba(255,255,255,.03)}
+/* ---------- document rail ---------- */
+.rail{max-width:1180px;margin-inline:auto;border-inline:1px solid var(--line)}
+@media(max-width:900px){.rail{border-inline:none}}
+.sec{padding-block:clamp(3.6rem,8vw,6.2rem)}
+.sechead{border-top:1px solid var(--line);padding-top:1.5rem;margin-bottom:2.6rem}
+.sechead p{color:var(--mut);max-width:38rem;margin-top:.8rem;font-size:.98rem}
+@media(min-width:880px){
+  .sechead{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:2.5rem;align-items:end}
+  .sechead p{margin-top:0;justify-self:end}
+}
 
-/* prompt card */
-.prompt-shell{border-radius:1.25rem;border:1px solid rgba(255,255,255,.14);overflow:hidden;background:#0c0618;box-shadow:0 30px 80px rgba(0,0,0,.5),0 0 60px rgba(167,139,250,.14)}
-.prompt-bar{display:flex;align-items:center;gap:.5rem;padding:.8rem 1.1rem;border-bottom:1px solid var(--line);background:rgba(255,255,255,.03)}
-.dot{width:.72rem;height:.72rem;border-radius:50%}
-.dot.r{background:#ff5f57}.dot.y{background:#febc2e}.dot.g{background:#28c840}
-.prompt-bar .label{margin-left:.6rem;font-family:var(--font-m);font-size:.78rem;color:var(--muted)}
-.prompt-bar .spacer{flex:1}
-.copy-btn{font-family:var(--font-m);font-size:.78rem;font-weight:700;letter-spacing:.06em;color:#12041f;background:var(--grad);border:none;border-radius:.55rem;padding:.45rem .9rem;cursor:pointer;transition:filter .15s ease,transform .15s ease}
-.copy-btn:hover{filter:brightness(1.12);transform:translateY(-1px)}
-.copy-btn:active{transform:translateY(0)}
-pre.prompt{padding:1.4rem 1.5rem;overflow-x:auto;font-family:var(--font-m);font-size:.83rem;line-height:1.65;color:#dcd2f5;white-space:pre}
-.prompt-note{color:var(--muted);font-size:.95rem;margin-top:1.1rem}
+/* ---------- hero ---------- */
+.hero{padding-block:clamp(3.2rem,7vw,6.5rem) clamp(3rem,6vw,5rem)}
+.hero-grid{display:grid;gap:3.2rem}
+@media(min-width:1000px){
+  .hero-grid{grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:4.5rem;align-items:center}
+}
+.cta{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:2.3rem}
+.compat{margin-top:2.6rem;padding-top:1.1rem;border-top:1px solid var(--line);font-family:var(--font-m);font-size:.62rem;font-weight:500;letter-spacing:.16em;color:var(--dim);text-transform:uppercase}
+.compat b{color:var(--mut);font-weight:500}
 
-/* steps */
-.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.1rem;margin-top:2.4rem}
-.step{background:var(--card);border:1px solid var(--line);border-radius:1rem;padding:1.5rem 1.4rem;position:relative;transition:transform .15s ease,border-color .15s ease}
-.step:hover{transform:translateY(-4px);border-color:var(--c,var(--violet))}
-.step .n{font-family:var(--font-m);font-weight:700;font-size:.8rem;color:#12041f;background:var(--c,var(--violet));width:1.9rem;height:1.9rem;border-radius:.55rem;display:flex;align-items:center;justify-content:center;margin-bottom:.9rem}
-.step h3{font-size:1.05rem;margin-bottom:.4rem}
-.step p{color:var(--muted);font-size:.92rem}
-.step code{font-family:var(--font-m);font-size:.82em;color:var(--c,var(--violet))}
+/* ---------- mesh figure ---------- */
+.meshfig{width:min(100%,440px);margin:0}
+@media(min-width:1000px){.meshfig{justify-self:end;width:100%;max-width:440px}}
+.stage{position:relative;aspect-ratio:1/1;width:100%;background:var(--bg2);border:1px solid var(--line2);overflow:hidden}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.stage .fallback{position:absolute;inset:0;width:100%;height:100%;opacity:.85}
+.no-canvas .stage canvas{display:none}
+.meshfig figcaption{display:flex;justify-content:space-between;gap:1rem;padding-top:.65rem;margin-top:.75rem;border-top:1px solid var(--line);font-family:var(--font-m);font-size:.6rem;font-weight:500;letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
+.meshfig figcaption #meshstat{color:var(--acc)}
 
-/* pantheon */
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.1rem;margin-top:2.4rem}
-.agent{--c:var(--violet);background:var(--card);border:1px solid var(--line);border-radius:1rem;padding:1.5rem;transition:transform .15s ease,box-shadow .15s ease}
-.agent:hover{transform:translateY(-4px);box-shadow:0 14px 40px color-mix(in srgb,var(--c) 22%,transparent)}
-.agent .icon{font-size:1.7rem;line-height:1;margin-bottom:.8rem}
-.agent h3{font-size:1.08rem;display:flex;align-items:center;gap:.5rem}
-.agent h3 .tag{font-family:var(--font-m);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--c);border:1px solid color-mix(in srgb,var(--c) 45%,transparent);border-radius:.4rem;padding:.1rem .4rem}
-.agent p{color:var(--muted);font-size:.9rem;margin:.5rem 0 .8rem}
-.agent .model{font-family:var(--font-m);font-size:.75rem;color:var(--c)}
-.agent.observer{border-style:dashed}
-.agent.observer .model{color:var(--muted)}
-.grid-note{color:var(--muted);font-size:.9rem;margin-top:1.4rem}
+/* ---------- prompt card ---------- */
+.pcard{
+  background-color:var(--bg2);
+  border:1px solid var(--line2);
+  background-image:
+    linear-gradient(var(--acc),var(--acc)),linear-gradient(var(--acc),var(--acc)),
+    linear-gradient(var(--acc),var(--acc)),linear-gradient(var(--acc),var(--acc)),
+    linear-gradient(var(--acc),var(--acc)),linear-gradient(var(--acc),var(--acc)),
+    linear-gradient(var(--acc),var(--acc)),linear-gradient(var(--acc),var(--acc));
+  background-repeat:no-repeat;
+  background-size:12px 1px,1px 12px,12px 1px,1px 12px,12px 1px,1px 12px,12px 1px,1px 12px;
+  background-position:0 0,0 0,100% 0,100% 0,0 100%,0 100%,100% 100%,100% 100%;
+}
+.pbar{display:flex;align-items:center;gap:1rem;padding:.7rem .9rem .7rem 1.1rem;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.pbar .fname{font-family:var(--font-m);font-size:.74rem;font-weight:600;color:var(--ink);letter-spacing:.03em}
+.pbar .fmeta{font-family:var(--font-m);font-size:.6rem;font-weight:500;letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
+.pbar .grow{flex:1}
+pre.prompt{padding:1.15rem 1.2rem 1.25rem;overflow-x:auto;font-family:var(--font-m);font-size:clamp(.7rem,1.9vw,.8rem);line-height:1.72;color:#c9c8c2;white-space:pre;max-width:100%}
+.pfoot{border-top:1px solid var(--line);padding:.7rem 1.1rem;font-family:var(--font-m);font-size:.66rem;letter-spacing:.04em;color:var(--dim)}
+.pfoot a{color:var(--mut)}
 
-/* manual code blocks */
-.code-block{position:relative;margin:1rem 0 1.8rem}
-.code-block .lang{position:absolute;top:.7rem;right:.7rem;font-family:var(--font-m);font-size:.68rem;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;pointer-events:none}
-.code-block .copy-btn{position:absolute;top:.55rem;right:.55rem;font-size:.68rem;padding:.3rem .6rem;opacity:.85}
-pre.code{background:#0c0618;border:1px solid var(--line);border-radius:.9rem;padding:1.1rem 1.2rem;overflow-x:auto;font-family:var(--font-m);font-size:.85rem;line-height:1.6;color:#dcd2f5}
-pre.code .lang{display:none}
-h3.mini{font-size:1rem;margin-top:1.6rem;color:var(--ink)}
-h3.mini code, p code{font-family:var(--font-m);font-size:.85em;color:var(--gold)}
+/* ---------- ledger (what it does) ---------- */
+.ledger{list-style:none;border-top:1px solid var(--line)}
+.ledger li{display:grid;grid-template-columns:3.4rem minmax(0,1fr);gap:.4rem 1rem;padding:1.5rem 0 1.6rem;border-bottom:1px solid var(--line)}
+.ledger .ln{font-family:var(--font-m);font-size:.78rem;font-weight:700;color:var(--acc);letter-spacing:.06em;padding-top:.2rem}
+.ledger .ltag{grid-column:2;font-family:var(--font-m);font-size:.72rem;color:var(--dim);letter-spacing:.02em;word-break:break-word}
+.ledger p{color:var(--mut);font-size:.95rem;max-width:44rem;margin-top:.3rem}
+@media(min-width:880px){
+  .ledger li{grid-template-columns:4.2rem minmax(0,1fr) minmax(0,18rem);align-items:start}
+  .ledger .body{grid-column:2}
+  .ledger .ltag{grid-column:3;grid-row:1;text-align:right;padding-top:.25rem}
+}
 
-/* presets strip */
-.presets{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.1rem;margin-top:2rem}
-.preset{border:1px solid var(--line);border-radius:1rem;padding:1.3rem 1.4rem;background:var(--card)}
-.preset b{display:block;margin-bottom:.35rem}
-.preset span{color:var(--muted);font-size:.9rem}
-.preset.live{border-color:var(--gold);box-shadow:0 0 40px rgba(251,191,36,.12)}
-.preset.live b{color:var(--gold)}
+/* ---------- roster ---------- */
+.roster{list-style:none;border-top:1px solid var(--line)}
+.roster li{
+  display:grid;grid-template-columns:3rem minmax(0,1fr);grid-template-areas:"num name" "num role" "num model";
+  gap:.15rem 1.1rem;padding:1.2rem .4rem;border-bottom:1px solid var(--line);
+  transition:background-color .18s ease,box-shadow .18s ease;
+}
+.roster li:hover{background:#0f0f12;box-shadow:inset 2px 0 0 var(--acc)}
+.roster .rn{grid-area:num;font-family:var(--font-m);font-size:.72rem;font-weight:700;color:var(--dim);letter-spacing:.06em;padding-top:.3rem;transition:color .18s ease}
+.roster li:hover .rn{color:var(--acc)}
+.roster .rname{grid-area:name;display:flex;align-items:center;gap:.7rem;flex-wrap:wrap}
+.roster .rname b{font-size:1.06rem;font-weight:650;letter-spacing:-.01em}
+.roster .tag{font-family:var(--font-m);font-size:.56rem;font-weight:600;letter-spacing:.16em;color:var(--mut);border:1px solid var(--line2);border-radius:3px;padding:.18rem .45rem;text-transform:uppercase}
+.roster .rrole{grid-area:role;color:var(--mut);font-size:.93rem;max-width:40rem}
+.roster .rmodel{grid-area:model;font-family:var(--font-m);font-size:.7rem;color:var(--dim);letter-spacing:.04em;padding-bottom:.15rem}
+.roster li:hover .rmodel{color:var(--acc)}
+@media(min-width:880px){
+  .roster li{grid-template-columns:3.4rem minmax(0,15rem) minmax(0,1fr) auto;grid-template-areas:"num name role model";align-items:baseline;gap:.2rem 1.4rem}
+  .roster .rmodel{text-align:right;padding:0}
+}
+.roster li.opt{border-top:1px dashed var(--line2);margin-top:-1px}
+.roster li.opt .rname b{color:var(--mut)}
+.roster li.opt:hover{background:transparent;box-shadow:inset 2px 0 0 var(--line2)}
+.roster li.opt:hover .rn{color:var(--mut)}
+.roster li.opt:hover .rmodel{color:var(--dim)}
+.rosternote{color:var(--mut);font-size:.92rem;margin-top:1.6rem}
 
-/* footer */
-footer{border-top:1px solid var(--line);padding:2.6rem 0;color:var(--muted);font-size:.88rem}
-footer .wrap{display:flex;flex-wrap:wrap;gap:1rem 2rem;justify-content:space-between;align-items:center}
+/* ---------- manual ---------- */
+.manual{display:grid;gap:2.8rem}
+@media(min-width:940px){.manual{grid-template-columns:15rem minmax(0,1fr);gap:3.5rem}}
+.mlabel .idx{font-family:var(--font-m);font-size:.72rem;font-weight:700;color:var(--acc);letter-spacing:.1em;display:block;margin-bottom:.5rem}
+.mlabel h3{margin-bottom:.4rem}
+.mlabel p{color:var(--dim);font-size:.86rem;line-height:1.55}
+.cmds{display:grid;gap:.7rem;align-content:start}
+.codeblock{position:relative}
+pre.code{background:var(--bg2);border:1px solid var(--line);border-radius:4px;padding:.78rem 6.6rem .78rem 1rem;overflow-x:auto;font-family:var(--font-m);font-size:.8rem;line-height:1.6;color:#c9c8c2;white-space:pre;max-width:100%}
+.codeblock .copy{position:absolute;top:.5rem;right:.5rem}
+.mnote{color:var(--mut);font-size:.9rem;margin-top:1rem;max-width:44rem}
+.mnote a{color:var(--mut)}
 
-/* toast */
-#toast{position:fixed;bottom:1.6rem;left:50%;transform:translate(-50%,140%);background:var(--grad);color:#12041f;font-weight:700;font-size:.9rem;padding:.7rem 1.3rem;border-radius:999px;transition:transform .25s ease;z-index:99;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+/* ---------- presets ---------- */
+.plist{display:grid;gap:0}
+@media(min-width:820px){.plist{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.pitem{padding:1.3rem 0}
+.pitem b{display:block;font-family:var(--font-m);font-size:.66rem;font-weight:700;letter-spacing:.18em;color:var(--acc);text-transform:uppercase;margin-bottom:.6rem}
+.pitem p{color:var(--mut);font-size:.92rem}
+@media(min-width:820px){
+  .plist{border-top:1px solid var(--line)}
+  .pitem{border-left:1px solid var(--line);padding:1.5rem 1.6rem 0}
+  .pitem:first-child{border-left:none;padding-left:0}
+}
+@media(max-width:819px){
+  .pitem{border-top:1px solid var(--line)}
+  .pitem:first-child{border-top:none;padding-top:0}
+}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--line);padding:2.4rem 0 2.8rem}
+.frow{display:grid;gap:1.2rem}
+@media(min-width:820px){.frow{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);align-items:end}}
+footer p{color:var(--mut);font-size:.88rem;max-width:44rem}
+.flLinks{font-family:var(--font-m);font-size:.62rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.flLinks a{color:var(--mut);text-decoration:none}
+.flLinks a:hover{color:var(--acc);text-decoration:none}
+
+/* ---------- toast ---------- */
+#toast{position:fixed;bottom:1.5rem;left:50%;transform:translate(-50%,180%);background:#111114;border:1px solid var(--line2);border-left:3px solid var(--acc);color:var(--ink);font-family:var(--font-m);font-size:.68rem;font-weight:600;letter-spacing:.12em;padding:.75rem 1.1rem;border-radius:4px;transition:transform .22s ease;z-index:1001;white-space:nowrap}
 #toast.show{transform:translate(-50%,0)}
+
+/* ---------- reveal ---------- */
+.js .rv{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease;transition-delay:var(--d,0s)}
+.js .rv.in{opacity:1;transform:none}
 
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  *{transition:none!important;animation:none!important}
+  *,*::before,*::after{transition:none!important;animation:none!important}
+  .js .rv{opacity:1;transform:none}
 }
 </style>
 </head>
 <body>
 
 <nav>
-  <div class="wrap">
-    <a class="brand" href="#top"><span class="bolt">⚡</span> opencode<span style="color:var(--muted)">·</span>onboarding</a>
-    <ul>
-      <li><a href="#prompt">The prompt</a></li>
-      <li><a href="#what">What it does</a></li>
-      <li><a href="#pantheon">The pantheon</a></li>
+  <div class="wrap navrow">
+    <a class="brand" href="#top" aria-label="Back to top">
+      <svg width="16" height="16" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="12" fill="#0d0d0f"/><path d="M18 20l14 12-14 12" fill="none" stroke="#c8ff4d" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M34 44h14" stroke="#c8ff4d" stroke-width="7" stroke-linecap="round"/></svg>
+      opencode2<span class="tail">/onboarding</span>
+    </a>
+    <ul class="navlinks">
+      <li><a href="#prompt">Prompt</a></li>
+      <li><a href="#what">Install</a></li>
+      <li><a href="#pantheon">Roster</a></li>
       <li><a href="#manual">Manual</a></li>
     </ul>
   </div>
 </nav>
 
-<header class="hero center" id="top">
-  <div class="wrap">
-    <span class="eyebrow">OpenCode 2 · onboarding</span>
-    <h1>One paste.<br><span class="grad-text">Seven agents.</span><br>Zero decisions.</h1>
-    <p class="sub center" style="margin:0 auto">Copy a single prompt into the AI agent you already use. It installs <strong>OpenCode 2</strong> (<code style="font-family:var(--font-m)">opencode2</code>), wires up the <strong>oh-my-opencode-slim</strong> multi-agent suite, and verifies everything — all on defaults.</p>
-    <div class="hero-cta">
-      <a class="btn btn-primary" href="#prompt">⚡ Copy the setup prompt</a>
-      <a class="btn btn-ghost" href="#manual">Manual install</a>
+<div class="rail">
+
+<header class="hero wrap" id="top">
+  <div class="hero-grid">
+    <div>
+      <p class="kicker"><span class="idx">00</span> Unofficial onboarding · OpenCode 2 beta + oh-my-opencode-slim</p>
+      <h1>One prompt in, <span class="acc">seven agents</span> out.</h1>
+      <p class="lede">Paste a single block of text into the coding agent you already use. It installs OpenCode&nbsp;2, wires up the oh-my-opencode-slim multi-agent suite, keeps every default, and verifies the whole team before it calls the job done.</p>
+      <div class="cta">
+        <button class="btn btn-acc" data-copy="#setup-prompt" data-done="Copied — paste it anywhere">Copy the setup prompt</button>
+        <a class="btn btn-ghost" href="#manual">Manual install</a>
+      </div>
+      <p class="compat"><b>Runs with</b> — Claude Code · Codex CLI · Cursor · Gemini CLI · any shell-capable agent</p>
     </div>
-    <div class="chips">
-      <span class="chip">Claude Code</span>
-      <span class="chip">Codex CLI</span>
-      <span class="chip">Cursor</span>
-      <span class="chip">Gemini CLI</span>
-      <span class="chip">any LLM agent</span>
-    </div>
+
+    <figure class="meshfig" id="meshfig">
+      <div class="stage">
+        <svg class="fallback" viewBox="0 0 100 100" aria-hidden="true">
+          <g stroke="#2b2b31" stroke-width="0.6">
+            <line x1="50" y1="50" x2="50" y2="16.5"/><line x1="50" y1="50" x2="80.4" y2="38.9"/>
+            <line x1="50" y1="50" x2="80.4" y2="61.1"/><line x1="50" y1="50" x2="50" y2="83.5"/>
+            <line x1="50" y1="50" x2="19.6" y2="61.1"/><line x1="50" y1="50" x2="19.6" y2="38.9"/>
+            <line x1="50" y1="50" x2="69.9" y2="27.2"/>
+          </g>
+          <polygon points="50,16.5 80.4,38.9 80.4,61.1 50,83.5 19.6,61.1 19.6,38.9 69.9,27.2 50,16.5" fill="none" stroke="#212125"/>
+          <circle cx="50" cy="16.5" r="2" fill="#ecebe6"/><circle cx="80.4" cy="38.9" r="2" fill="#ecebe6"/>
+          <circle cx="80.4" cy="61.1" r="2" fill="#ecebe6"/><circle cx="50" cy="83.5" r="2" fill="#ecebe6"/>
+          <circle cx="19.6" cy="61.1" r="2" fill="#ecebe6"/><circle cx="19.6" cy="38.9" r="2" fill="#ecebe6"/>
+          <circle cx="69.9" cy="27.2" r="2" fill="#ecebe6"/>
+          <circle cx="50" cy="50" r="3" fill="#c8ff4d"/>
+        </svg>
+        <canvas id="mesh" aria-hidden="true"></canvas>
+      </div>
+      <figcaption>
+        <span>Fig. 01 — delegation mesh</span>
+        <span id="meshstat">Static</span>
+      </figcaption>
+    </figure>
   </div>
 </header>
 
-<section id="prompt">
+<section id="prompt" class="sec">
   <div class="wrap">
-    <div class="center">
-      <span class="eyebrow">The copy-paste prompt</span>
-      <h2>Paste this into <span class="grad-text">any agent</span></h2>
-      <p class="sub center" style="margin:0 auto 2.4rem">Your agent does the rest: installs OpenCode 2, installs the plugin, keeps the default preset, and pings every agent to prove it works.</p>
+    <div class="sechead rv">
+      <h2><span class="idx">01</span>The whole setup is one paste</h2>
+      <p>This is the page's only artifact — everything else is context. Your agent does the rest: installs the CLI, adds the plugin, keeps the default preset, and pings every agent to prove the team answers.</p>
     </div>
-    <div class="prompt-shell">
-      <div class="prompt-bar">
-        <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
-        <span class="label">setup-prompt.txt</span>
-        <span class="spacer"></span>
-        <button class="copy-btn" data-copy="#setup-prompt" aria-label="Copy the setup prompt">COPY</button>
+
+    <div class="pcard rv" style="--d:.08s">
+      <div class="pbar">
+        <span class="fname">setup-prompt.txt</span>
+        <span class="fmeta">plain text · 2.1 KB · UTF-8</span>
+        <span class="grow"></span>
+        <button class="copy" data-copy="#setup-prompt" aria-label="Copy the setup prompt">COPY</button>
       </div>
 <pre class="prompt" id="setup-prompt">Set me up with OpenCode 2 (opencode2) plus the oh-my-opencode-slim multi-agent suite. Use the default setup everywhere: install, configure, verify. Don't ask me to pick models or presets - the defaults are what I want.
 
@@ -200,6 +313,7 @@ Steps:
        npx oh-my-opencode-slim@latest install
 
    (or `bunx oh-my-opencode-slim@latest install`). Accept every installer default. The default preset (OpenAI) is fine.
+   If I have a Z.ai GLM coding plan, configure the agents on glm-5.3 instead - the most recent GLM; explorer and librarian may use glm-5-turbo. Never default any agent to glm-5.2.
 
 3. Make sure OpenCode 2 loads the plugin. The installer usually registers it. If not, follow the "OpenCode v2 (opencode2) Compatibility" section of the plugin README and add the plugin entry to the config file OpenCode 2 loads on this machine (official v2 docs put global config at ~/.config/opencode/opencode.json with a `plugins` array; the plugin README references ~/.config/opencode2/). Keep every existing entry.
 
@@ -213,207 +327,440 @@ Rules:
 - If a step fails, stop, print the full error, and propose a fix before continuing.
 - Finish with a short summary: what was installed, where the config files live, and how to switch model presets later with /preset.
 
-References: https://opencode.ai/v2/docs/ - https://github.com/alvinunreal/oh-my-opencode-slim</pre>
-    </div>
-    <p class="prompt-note center">Prefer raw text? <a href="prompt.txt">prompt.txt</a> — curl it, cat it, pipe it into whatever you like.</p>
-  </div>
-</section>
-
-<section id="what">
-  <div class="wrap">
-    <div class="center">
-      <span class="eyebrow">What the paste does</span>
-      <h2>Defaults in, <span class="grad-text">verified team out</span></h2>
-    </div>
-    <div class="steps">
-      <div class="step" style="--c:var(--cyan)">
-        <span class="n">1</span>
-        <h3>Install OpenCode 2</h3>
-        <p>Global install of <code>@opencode-ai/cli@next</code>. Runs as <code>opencode2</code> — v1's <code>opencode</code> binary stays untouched, side by side.</p>
-      </div>
-      <div class="step" style="--c:var(--magenta)">
-        <span class="n">2</span>
-        <h3>Add oh-my-opencode-slim</h3>
-        <p>One <code>npx</code> command installs the multi-agent plugin and registers it in your global OpenCode 2 config.</p>
-      </div>
-      <div class="step" style="--c:var(--gold)">
-        <span class="n">3</span>
-        <h3>Default preset, no questions</h3>
-        <p>Installer defaults all the way — the OpenAI preset is active out of the box. Connect any provider you like with <code>/connect</code>.</p>
-      </div>
-      <div class="step" style="--c:var(--emerald)">
-        <span class="n">4</span>
-        <h3>Verify the pantheon</h3>
-        <p><code>ping all agents</code> in your first session — all seven specialists must answer before the setup is called done.</p>
-      </div>
+References: https://opencode.ai/v2/docs/ - https://github.com/alvinunreal/oh-my-opencode-slim
+</pre>
+      <div class="pfoot">Prefer raw text? <a href="prompt.txt">prompt.txt</a> — curl it, cat it, pipe it into whatever you like.</div>
     </div>
   </div>
 </section>
 
-<section id="pantheon">
+<section id="what" class="sec">
   <div class="wrap">
-    <div class="center">
-      <span class="eyebrow">Meet the pantheon</span>
-      <h2>Seven specialists, <span class="grad-text">one orchestrator</span></h2>
-      <p class="sub center" style="margin:0 auto">Each part of the job routes to the agent best suited for it — balancing quality, speed, and cost. These are the default models; swap the whole team at runtime with <code style="font-family:var(--font-m)">/preset</code>.</p>
+    <div class="sechead rv">
+      <h2><span class="idx">02</span>What the paste does</h2>
+      <p>Four things, in order, all on defaults. If any step fails, the prompt tells your agent to stop, print the full error, and propose a fix before touching anything else.</p>
     </div>
-    <div class="grid">
-      <div class="agent" style="--c:var(--gold)">
-        <div class="icon">👑</div>
-        <h3>Orchestrator <span class="tag">Order</span></h3>
-        <p>Master delegator and strategic coordinator. Plans the work, dispatches specialists, reconciles results.</p>
-        <span class="model">openai/gpt-5.6-terra</span>
-      </div>
-      <div class="agent" style="--c:var(--cyan)">
-        <div class="icon">🧭</div>
-        <h3>Explorer <span class="tag">Wanderer</span></h3>
-        <p>Codebase reconnaissance. Fast, broad scouting of files, patterns, and structure.</p>
-        <span class="model">openai/gpt-5.6-luna</span>
-      </div>
-      <div class="agent" style="--c:var(--violet)">
-        <div class="icon">🔮</div>
-        <h3>Oracle <span class="tag">Paths</span></h3>
-        <p>Strategic advisor and debugger of last resort for architecture and hard trade-offs.</p>
-        <span class="model">openai/gpt-5.6-sol</span>
-      </div>
-      <div class="agent" style="--c:var(--magenta)">
-        <div class="icon">🏛️</div>
-        <h3>Council <span class="tag">Chorus</span></h3>
-        <p>Runs multiple models in parallel on one question and synthesizes a single verdict. Call it with <code>@council</code>.</p>
-        <span class="model">config-driven</span>
-      </div>
-      <div class="agent" style="--c:var(--emerald)">
-        <div class="icon">📚</div>
-        <h3>Librarian <span class="tag">Weaver</span></h3>
-        <p>External knowledge retrieval — fresh docs and references, woven into answers.</p>
-        <span class="model">openai/gpt-5.6-luna</span>
-      </div>
-      <div class="agent" style="--c:var(--orange)">
-        <div class="icon">🎨</div>
-        <h3>Designer <span class="tag">Aesthetics</span></h3>
-        <p>UI/UX implementation and visual excellence. Every pixel serves a purpose.</p>
-        <span class="model">openai/gpt-5.6-luna</span>
-      </div>
-      <div class="agent" style="--c:var(--blue)">
-        <div class="icon">🔨</div>
-        <h3>Fixer <span class="tag">Builder</span></h3>
-        <p>Fast implementation specialist — the final step between plan and reality.</p>
-        <span class="model">openai/gpt-5.6-luna</span>
-      </div>
-      <div class="agent observer">
-        <div class="icon">👁️</div>
-        <h3>Observer <span class="tag" style="color:var(--muted);border-color:var(--line)">Optional</span></h3>
-        <p>Read-only visual analysis for images, screenshots, and PDFs. Disabled by default; enable it if your orchestrator model isn't multimodal.</p>
-        <span class="model">vision-capable model</span>
-      </div>
-    </div>
-    <p class="grid-note center">Defaults are a starting point — the plugin is built for deep customization. See the <a href="https://github.com/alvinunreal/oh-my-opencode-slim/tree/master/docs" rel="noopener">preset &amp; configuration docs</a>.</p>
+
+    <ol class="ledger">
+      <li class="rv" style="--d:.02s">
+        <span class="ln">01</span>
+        <div class="body">
+          <h3>Install OpenCode 2</h3>
+          <p>Global install of <code>@opencode-ai/cli@next</code>. It runs as <code>opencode2</code> and leaves an existing <code>opencode</code> v1 install untouched, side by side.</p>
+        </div>
+        <span class="ltag">npm install -g @opencode-ai/cli@next</span>
+      </li>
+      <li class="rv" style="--d:.06s">
+        <span class="ln">02</span>
+        <div class="body">
+          <h3>Add oh-my-opencode-slim</h3>
+          <p>One <code>npx</code> command installs the multi-agent plugin and registers it in your global OpenCode 2 config.</p>
+        </div>
+        <span class="ltag">npx oh-my-opencode-slim@latest install</span>
+      </li>
+      <li class="rv" style="--d:.1s">
+        <span class="ln">03</span>
+        <div class="body">
+          <h3>Defaults, no questions</h3>
+          <p>The OpenAI preset is active out of the box. The prompt checks that a model provider is connected — <code>/connect</code> if not — before moving on.</p>
+        </div>
+        <span class="ltag">default preset · OpenAI</span>
+      </li>
+      <li class="rv" style="--d:.14s">
+        <span class="ln">04</span>
+        <div class="body">
+          <h3>Verify the team</h3>
+          <p>In your first session, send <code>ping all agents</code>. The setup isn't done until all seven specialists answer.</p>
+        </div>
+        <span class="ltag">ping all agents</span>
+      </li>
+    </ol>
   </div>
 </section>
 
-<section id="manual">
+<section id="pantheon" class="sec">
   <div class="wrap">
-    <div class="center">
-      <span class="eyebrow">Prefer doing it yourself?</span>
-      <h2>Manual install, <span class="grad-text">four commands</span></h2>
+    <div class="sechead rv">
+      <h2><span class="idx">03</span>The roster — seven specialists, one orchestrator</h2>
+      <p>Each part of a job routes to the agent best suited for it, balancing quality, speed, and cost. Models shown are the default preset; swap the whole team at runtime with <code>/preset</code>.</p>
     </div>
 
-    <h3 class="mini">1 · Install the OpenCode 2 CLI</h3>
-    <div class="code-block">
-      <button class="copy-btn" data-copy="#c-npm" aria-label="Copy npm install command">COPY</button>
-      <pre class="code" id="c-npm">npm install -g @opencode-ai/cli@next</pre>
-    </div>
-    <div class="code-block">
-      <button class="copy-btn" data-copy="#c-bun" aria-label="Copy bun install command">COPY</button>
-      <pre class="code" id="c-bun">bun install -g --trust @opencode-ai/cli@next</pre>
-    </div>
-    <div class="code-block">
-      <button class="copy-btn" data-copy="#c-curl" aria-label="Copy curl install command">COPY</button>
-      <pre class="code" id="c-curl">curl -fsSL https://raw.githubusercontent.com/anomalyco/opencode/v2/install | bash</pre>
-    </div>
-
-    <h3 class="mini">2 · Install oh-my-opencode-slim</h3>
-    <div class="code-block">
-      <button class="copy-btn" data-copy="#c-slim" aria-label="Copy plugin install command">COPY</button>
-      <pre class="code" id="c-slim">npx oh-my-opencode-slim@latest install</pre>
-    </div>
-
-    <h3 class="mini">3 · Make sure OpenCode 2 loads it</h3>
-    <p style="color:var(--muted);font-size:.95rem">Global config lives at <code>~/.config/opencode/opencode.json</code> (create the file if it doesn't exist):</p>
-    <div class="code-block">
-      <button class="copy-btn" data-copy="#c-json" aria-label="Copy plugin config JSON">COPY</button>
-      <pre class="code" id="c-json">{ "plugins": ["oh-my-opencode-slim"] }</pre>
-    </div>
-    <p style="color:var(--muted);font-size:.95rem">The plugin's README shows a <code>plugin</code> entry under <code>~/.config/opencode2/</code> for v2 — the installer wires this up either way. If <code>opencode2</code> starts without the slim agents, check that entry against the README's “OpenCode v2 Compatibility” section.</p>
-
-    <h3 class="mini">4 · Connect a provider &amp; verify</h3>
-    <div class="code-block">
-      <button class="copy-btn" data-copy="#c-run" aria-label="Copy run command">COPY</button>
-      <pre class="code" id="c-run">opencode2</pre>
-    </div>
-    <p style="color:var(--muted);font-size:.95rem">Run <code>/connect</code> to pick a provider, then send <code>ping all agents</code> — everyone should answer. Windows users: the beta recommends <a href="https://learn.microsoft.com/windows/wsl/install" rel="noopener">WSL</a>.</p>
+    <ul class="roster">
+      <li class="rv" style="--d:.02s">
+        <span class="rn">01</span>
+        <span class="rname"><b>Orchestrator</b></span>
+        <span class="rrole">Master delegator and strategic coordinator. Plans the work, dispatches specialists, reconciles results.</span>
+        <span class="rmodel">gpt-5.6-terra</span>
+      </li>
+      <li class="rv" style="--d:.05s">
+        <span class="rn">02</span>
+        <span class="rname"><b>Explorer</b></span>
+        <span class="rrole">Codebase reconnaissance — fast, broad scouting of files, patterns, and structure.</span>
+        <span class="rmodel">gpt-5.6-luna</span>
+      </li>
+      <li class="rv" style="--d:.08s">
+        <span class="rn">03</span>
+        <span class="rname"><b>Oracle</b></span>
+        <span class="rrole">Strategic advisor and debugger of last resort for architecture and hard trade-offs.</span>
+        <span class="rmodel">gpt-5.6-sol</span>
+      </li>
+      <li class="rv" style="--d:.11s">
+        <span class="rn">04</span>
+        <span class="rname"><b>Council</b></span>
+        <span class="rrole">Runs several models in parallel on one question and synthesizes a single verdict. Invoke it with <code>@council</code>.</span>
+        <span class="rmodel">config-driven</span>
+      </li>
+      <li class="rv" style="--d:.14s">
+        <span class="rn">05</span>
+        <span class="rname"><b>Librarian</b></span>
+        <span class="rrole">External knowledge retrieval — fresh docs and references, woven into answers.</span>
+        <span class="rmodel">gpt-5.6-luna</span>
+      </li>
+      <li class="rv" style="--d:.17s">
+        <span class="rn">06</span>
+        <span class="rname"><b>Designer</b></span>
+        <span class="rrole">UI/UX implementation and visual excellence. Every pixel serves a purpose.</span>
+        <span class="rmodel">gpt-5.6-luna</span>
+      </li>
+      <li class="rv" style="--d:.2s">
+        <span class="rn">07</span>
+        <span class="rname"><b>Fixer</b></span>
+        <span class="rrole">Fast implementation specialist — the last step between plan and reality.</span>
+        <span class="rmodel">gpt-5.6-luna</span>
+      </li>
+      <li class="opt rv" style="--d:.23s">
+        <span class="rn">08</span>
+        <span class="rname"><b>Observer</b><span class="tag">Optional</span></span>
+        <span class="rrole">Read-only visual analysis for images, screenshots, and PDFs. Off by default — enable it if your orchestrator model isn't multimodal.</span>
+        <span class="rmodel">vision-capable model</span>
+      </li>
+    </ul>
+    <p class="rosternote">Defaults are a starting point — the plugin is built for deep customization. See the <a href="https://github.com/alvinunreal/oh-my-opencode-slim/tree/master/docs" rel="noopener">preset &amp; configuration docs</a>.</p>
   </div>
 </section>
 
-<section id="presets">
+<section id="manual" class="sec">
   <div class="wrap">
-    <div class="center">
-      <span class="eyebrow">Presets</span>
-      <h2>Start default, <span class="grad-text">swap anytime</span></h2>
-      <p class="sub center" style="margin:0 auto 0">The setup prompt keeps the default preset. When you're ready for different models, one runtime command flips the whole team.</p>
+    <div class="sechead rv">
+      <h2><span class="idx">04</span>Prefer typing it yourself?</h2>
+      <p>The same steps by hand: three ways to install the CLI, one plugin command, one config entry, one verification.</p>
     </div>
-    <div class="presets">
-      <div class="preset live"><b>OpenAI — active by default</b><span>The preset the installer turns on. Terra orchestrates, Sol reasons, Luna handles the fast lanes.</span></div>
-      <div class="preset"><b>OpenCode Go</b><span>Open-source models on a $10/mo plan. Install with <code>--preset=opencode-go</code> or switch at runtime.</span></div>
-      <div class="preset"><b>Free &amp; custom mixes</b><span>A zero-cost preset exists, and any provider mix is supported — mix any model across any agent.</span></div>
+
+    <div class="manual">
+      <div class="mlabel rv">
+        <span class="idx">1</span>
+        <h3>Install the OpenCode 2 CLI</h3>
+        <p>Runs as <code>opencode2</code>. An existing v1 install stays untouched. Verify with <code>opencode2 --version</code>.</p>
+      </div>
+      <div class="cmds rv" style="--d:.06s">
+        <div class="codeblock">
+          <button class="copy" data-copy="#c-npm" aria-label="Copy npm install command">COPY</button>
+          <pre class="code" id="c-npm">npm install -g @opencode-ai/cli@next</pre>
+        </div>
+        <div class="codeblock">
+          <button class="copy" data-copy="#c-bun" aria-label="Copy bun install command">COPY</button>
+          <pre class="code" id="c-bun">bun install -g --trust @opencode-ai/cli@next</pre>
+        </div>
+        <div class="codeblock">
+          <button class="copy" data-copy="#c-curl" aria-label="Copy curl install command">COPY</button>
+          <pre class="code" id="c-curl">curl -fsSL https://raw.githubusercontent.com/anomalyco/opencode/v2/install | bash</pre>
+        </div>
+      </div>
+
+      <div class="mlabel rv">
+        <span class="idx">2</span>
+        <h3>Install oh-my-opencode-slim</h3>
+        <p>Accept every installer default — the OpenAI preset is fine.</p>
+      </div>
+      <div class="cmds rv" style="--d:.06s">
+        <div class="codeblock">
+          <button class="copy" data-copy="#c-slim" aria-label="Copy plugin install command">COPY</button>
+          <pre class="code" id="c-slim">npx oh-my-opencode-slim@latest install</pre>
+        </div>
+      </div>
+
+      <div class="mlabel rv">
+        <span class="idx">3</span>
+        <h3>Make sure OpenCode 2 loads it</h3>
+        <p>The installer usually registers the plugin. If not, add it to the global config.</p>
+      </div>
+      <div class="cmds rv" style="--d:.06s">
+        <div class="codeblock">
+          <button class="copy" data-copy="#c-json" aria-label="Copy plugin config JSON">COPY</button>
+          <pre class="code" id="c-json">{ "plugins": ["oh-my-opencode-slim"] }</pre>
+        </div>
+        <p class="mnote">Global config lives at <code>~/.config/opencode/opencode.json</code> (create the file if it doesn't exist). The plugin README shows a <code>plugin</code> entry under <code>~/.config/opencode2/</code> for v2 — the installer wires this up either way. If <code>opencode2</code> starts without the slim agents, check that entry against the README's "OpenCode v2 Compatibility" section.</p>
+      </div>
+
+      <div class="mlabel rv">
+        <span class="idx">4</span>
+        <h3>Connect a provider &amp; verify</h3>
+        <p>Run <code>opencode2</code> in your project, then check everyone answers.</p>
+      </div>
+      <div class="cmds rv" style="--d:.06s">
+        <div class="codeblock">
+          <button class="copy" data-copy="#c-run" aria-label="Copy run command">COPY</button>
+          <pre class="code" id="c-run">opencode2</pre>
+        </div>
+        <p class="mnote">Run <code>/connect</code> to pick a model provider, then send <code>ping all agents</code> — all seven should answer. Windows users: the beta recommends <a href="https://learn.microsoft.com/windows/wsl/install" rel="noopener">WSL</a>.</p>
+      </div>
     </div>
-    <p class="grid-note center">Switch at runtime with <code style="font-family:var(--font-m)">/preset</code> · browse all options in the <a href="https://github.com/alvinunreal/oh-my-opencode-slim/tree/master/docs" rel="noopener">preset docs</a>.</p>
+  </div>
+</section>
+
+<section id="presets" class="sec">
+  <div class="wrap">
+    <div class="sechead rv">
+      <h2><span class="idx">05</span>Start on the default, switch with /preset</h2>
+      <p>The setup prompt keeps the installer default. When you want different models, one runtime command flips the entire team.</p>
+    </div>
+
+    <div class="plist">
+      <div class="pitem rv" style="--d:.02s">
+        <b>Default</b>
+        <p>OpenAI, active out of the box: terra orchestrates, sol reasons, luna takes the fast lanes.</p>
+      </div>
+      <div class="pitem rv" style="--d:.08s">
+        <b>Switch</b>
+        <p><code>/preset</code> at runtime swaps the whole team. On a Z.ai GLM plan, glm-5.3 is the pick — glm-5-turbo for explorer and librarian. The opencode-go plan and free or custom mixes work too.</p>
+      </div>
+      <div class="pitem rv" style="--d:.14s">
+        <b>Reference</b>
+        <p>Every agent, model, and knob is documented — see the <a href="https://github.com/alvinunreal/oh-my-opencode-slim/tree/master/docs" rel="noopener">preset &amp; configuration docs</a>.</p>
+      </div>
+    </div>
   </div>
 </section>
 
 <footer>
-  <div class="wrap">
-    <span>Unofficial onboarding page for <a href="https://opencode.ai/v2/docs/" rel="noopener">OpenCode 2</a> + <a href="https://github.com/alvinunreal/oh-my-opencode-slim" rel="noopener">oh-my-opencode-slim</a>. OpenCode 2 is beta — APIs may change.</span>
-    <span>⚡ One paste and you're coding with a pantheon.</span>
+  <div class="wrap frow">
+    <p>Unofficial onboarding page — not affiliated with either project. OpenCode 2 by <a href="https://opencode.ai/v2/docs/" rel="noopener">anomalyco</a> (beta; APIs may change). oh-my-opencode-slim by <a href="https://github.com/alvinunreal/oh-my-opencode-slim" rel="noopener">Boring Dystopia Development</a>.</p>
+    <p class="flLinks">
+      <a href="https://opencode.ai/v2/docs/" rel="noopener">OpenCode docs</a> · <a href="https://github.com/alvinunreal/oh-my-opencode-slim" rel="noopener">Plugin on GitHub</a> · <a href="prompt.txt">Raw prompt</a>
+    </p>
   </div>
 </footer>
 
-<div id="toast" role="status" aria-live="polite">Copied!</div>
+</div><!-- /rail -->
+
+<div id="toast" role="status" aria-live="polite">Copied to clipboard</div>
 
 <script>
-(function(){
-  var toast = document.getElementById('toast');
-  var toastTimer = null;
-  function showToast(msg){
+/* ---------- copy + toast ---------- */
+(function () {
+  var toast = document.getElementById('toast'), tt = null;
+  function say(msg) {
     toast.textContent = msg;
     toast.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 1600);
+    clearTimeout(tt);
+    tt = setTimeout(function () { toast.classList.remove('show'); }, 1800);
   }
-  function copyText(text, btn){
-    function fallback(){
+  function mark(btn, ok) {
+    if (!btn) return;
+    if (!btn.getAttribute('data-label')) btn.setAttribute('data-label', btn.textContent);
+    btn.textContent = ok ? (btn.getAttribute('data-done') || 'COPIED') : 'COPY FAILED';
+    btn.classList.add('done');
+    clearTimeout(btn._t);
+    btn._t = setTimeout(function () {
+      btn.textContent = btn.getAttribute('data-label');
+      btn.classList.remove('done');
+    }, 1800);
+  }
+  function copyText(text, btn) {
+    function fallback() {
       var ta = document.createElement('textarea');
       ta.value = text;
-      ta.style.position = 'fixed';
-      ta.style.opacity = '0';
+      ta.style.cssText = 'position:fixed;opacity:0';
       document.body.appendChild(ta);
       ta.select();
-      try { document.execCommand('copy'); showToast('Copied!'); }
-      catch(e){ showToast('Copy failed — select manually'); }
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch (e) {}
       document.body.removeChild(ta);
+      say(ok ? 'COPIED TO CLIPBOARD' : 'COPY FAILED — SELECT MANUALLY');
+      mark(btn, ok);
     }
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(function(){ showToast('Copied!'); }, fallback);
+      navigator.clipboard.writeText(text).then(function () {
+        say('COPIED TO CLIPBOARD');
+        mark(btn, true);
+      }, fallback);
     } else { fallback(); }
   }
-  document.addEventListener('click', function(e){
-    var btn = e.target.closest('.copy-btn');
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-copy]');
     if (!btn) return;
-    var sel = btn.getAttribute('data-copy');
-    var el = document.querySelector(sel);
+    var el = document.querySelector(btn.getAttribute('data-copy'));
     if (!el) return;
     copyText(el.textContent, btn);
   });
+})();
+
+/* ---------- scroll reveal ---------- */
+(function () {
+  var els = document.querySelectorAll('.rv');
+  if (!('IntersectionObserver' in window)) {
+    [].forEach.call(els, function (el) { el.classList.add('in'); });
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) {
+      if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
+  [].forEach.call(els, function (el) { io.observe(el); });
+})();
+
+/* ---------- delegation mesh: dot matrix + 7 agents + orchestrator ----------
+   2D canvas, no libraries. Pauses off-screen and on hidden tabs, caps DPR,
+   draws a single static frame under prefers-reduced-motion or on any
+   canvas failure (inline SVG fallback stays visible). */
+(function () {
+  var fig = document.getElementById('meshfig');
+  var cv = document.getElementById('mesh');
+  var stat = document.getElementById('meshstat');
+  if (!fig || !cv) return;
+
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var ctx = null;
+  try { ctx = cv.getContext('2d'); } catch (e) { ctx = null; }
+  if (!ctx) { fig.classList.add('no-canvas'); return; }
+
+  var BG = '#0d0d0f', ACC = '#c8ff4d', TAU = Math.PI * 2;
+  var W = 0, H = 0, dots = [], nodes = [], raf = 0;
+  var onscreen = true, tabvis = !document.hidden;
+  var P = { x: -9e3, y: -9e3 };
+
+  function build() {
+    var r = fig.querySelector('.stage').getBoundingClientRect();
+    var dpr = Math.min(window.devicePixelRatio || 1, 1.75);
+    W = Math.max(1, Math.round(r.width));
+    H = Math.max(1, Math.round(r.height));
+    cv.width = Math.round(W * dpr);
+    cv.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    dots = [];
+    var gap = W < 380 ? 22 : 26;
+    for (var y = gap; y < H; y += gap)
+      for (var x = gap; x < W; x += gap) dots.push([x, y]);
+    nodes = [];
+    for (var i = 0; i < 7; i++) nodes.push({
+      a: -Math.PI / 2 + i * (TAU / 7),
+      w: Math.random() * TAU,
+      pk: Math.random(),
+      pv: 0.0035 + Math.random() * 0.004
+    });
+  }
+
+  function npos(n, tm) {
+    var R = Math.min(W, H) * 0.335 + Math.sin(tm * 0.0006 + n.w) * Math.min(W, H) * 0.022;
+    var ang = n.a + tm * 0.00005;
+    var x = W / 2 + Math.cos(ang) * R;
+    var y = H / 2 + Math.sin(ang) * R;
+    var dx = P.x - x, dy = P.y - y, d2 = dx * dx + dy * dy;
+    if (d2 < 25600) { // gentle pointer pull within 160px
+      var d = Math.sqrt(d2) || 1, f = (1 - d / 160) * 9;
+      x += dx / d * f; y += dy / d * f;
+    }
+    return [x, y];
+  }
+
+  function draw(tm) {
+    ctx.fillStyle = BG;
+    ctx.fillRect(0, 0, W, H);
+
+    // dot matrix, pointer-reactive
+    var R2 = 130 * 130;
+    for (var i = 0; i < dots.length; i++) {
+      var d = dots[i], dx = d[0] - P.x, dy = d[1] - P.y, d2 = dx * dx + dy * dy;
+      if (d2 < R2) {
+        var dist = Math.sqrt(d2) || 1, f = 1 - dist / 130;
+        ctx.fillStyle = 'rgba(200,255,77,' + (0.16 + f * 0.5).toFixed(3) + ')';
+        ctx.fillRect(d[0] + dx / dist * f * 8 - 1, d[1] + dy / dist * f * 8 - 1, 2, 2);
+      } else {
+        ctx.fillStyle = 'rgba(236,235,230,0.08)';
+        ctx.fillRect(d[0] - 1, d[1] - 1, 2, 2);
+      }
+    }
+
+    var cx = W / 2, cy = H / 2;
+    var ps = [];
+    for (var k = 0; k < nodes.length; k++) ps.push(npos(nodes[k], tm));
+
+    // faint ring between neighbours
+    ctx.strokeStyle = 'rgba(236,235,230,0.07)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (var m = 0; m < ps.length; m++) m ? ctx.lineTo(ps[m][0], ps[m][1]) : ctx.moveTo(ps[m][0], ps[m][1]);
+    ctx.closePath();
+    ctx.stroke();
+
+    // spokes, packets, nodes, labels
+    ctx.font = '600 9px "JetBrains Mono", ui-monospace, monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    for (var j = 0; j < ps.length; j++) {
+      var p = ps[j], n = nodes[j];
+      ctx.strokeStyle = 'rgba(200,255,77,0.13)';
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(p[0], p[1]); ctx.stroke();
+      if (n.pk >= 0 && n.pk <= 1) { // packet: work dispatched to the agent
+        ctx.fillStyle = 'rgba(200,255,77,0.9)';
+        ctx.beginPath();
+        ctx.arc(cx + (p[0] - cx) * n.pk, cy + (p[1] - cy) * n.pk, 1.8, 0, TAU);
+        ctx.fill();
+      }
+      ctx.strokeStyle = 'rgba(236,235,230,0.35)';
+      ctx.beginPath(); ctx.arc(p[0], p[1], 6.5, 0, TAU); ctx.stroke();
+      ctx.fillStyle = 'rgba(236,235,230,0.85)';
+      ctx.beginPath(); ctx.arc(p[0], p[1], 2.2, 0, TAU); ctx.fill();
+      var ux = p[0] - cx, uy = p[1] - cy, ul = Math.sqrt(ux * ux + uy * uy) || 1;
+      ctx.fillStyle = 'rgba(150,148,140,0.9)';
+      ctx.fillText('0' + (j + 1), p[0] + ux / ul * 17, p[1] + uy / ul * 17);
+      n.pk += n.pv;
+      if (n.pk > 1) n.pk = -Math.random() * 1.2;
+    }
+
+    // orchestrator
+    ctx.fillStyle = ACC;
+    ctx.beginPath(); ctx.arc(cx, cy, 3.5, 0, TAU); ctx.fill();
+    ctx.strokeStyle = 'rgba(200,255,77,0.5)';
+    ctx.beginPath(); ctx.arc(cx, cy, 8.5, 0, TAU); ctx.stroke();
+    ctx.fillStyle = 'rgba(200,255,77,0.75)';
+    ctx.fillText('ORCH', cx, cy + 22);
+  }
+
+  function loop(tm) { draw(tm); raf = requestAnimationFrame(loop); }
+  function play() {
+    if (reduce || raf || !onscreen || !tabvis) return;
+    if (stat) stat.textContent = 'Live';
+    raf = requestAnimationFrame(loop);
+  }
+  function halt() { if (raf) { cancelAnimationFrame(raf); raf = 0; } }
+
+  build();
+  if (reduce) { draw(1200); } else { play(); }
+
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (entries) {
+      onscreen = entries[0].isIntersecting;
+      onscreen ? play() : halt();
+    }, { threshold: 0.05 }).observe(fig);
+  }
+  document.addEventListener('visibilitychange', function () {
+    tabvis = !document.hidden;
+    tabvis ? play() : halt();
+  });
+  var rt;
+  window.addEventListener('resize', function () {
+    clearTimeout(rt);
+    rt = setTimeout(function () { build(); if (reduce) draw(1200); }, 150);
+  });
+  var stage = fig.querySelector('.stage');
+  stage.addEventListener('pointermove', function (e) {
+    var r = stage.getBoundingClientRect();
+    P.x = e.clientX - r.left;
+    P.y = e.clientY - r.top;
+  });
+  stage.addEventListener('pointerleave', function () { P.x = P.y = -9e3; });
 })();
 </script>
 </body>
